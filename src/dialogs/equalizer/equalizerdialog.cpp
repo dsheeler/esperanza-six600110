@@ -149,8 +149,10 @@ EqualizerDialog::effects (const Xmms::List< Xmms::Dict > &dl)
 {
 	bool effects = false;
 	
-	for (dl.first (); dl.isValid (); ++dl) {
-		Xmms::Dict d = *dl;
+	Xmms::List< Xmms::Dict >::const_iterator it_end = dl.end();
+	for (Xmms::List< Xmms::Dict >::const_iterator it = dl.begin();
+	     it != it_end; ++it) {
+		Xmms::Dict d = *it;
 		if (d.contains ("shortname")) {
 			if (d.get<std::string> ("shortname") == "equalizer") {
 				effects = true;

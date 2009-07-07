@@ -194,10 +194,12 @@ MedialibDialog::compl_reply (const Xmms::List <Xmms::Dict> &list)
 {
 	QStringList compl_list;
 
-	for (list.first (); list.isValid (); ++ list) {
+	Xmms::List <Xmms::Dict>::const_iterator it_end = list.end();
+	for (Xmms::List <Xmms::Dict>::const_iterator it = list.begin();
+	     it != it_end; ++ it) {
 		/* This seems to happen if a album is "" */
-		if ((*list).contains (m_currentsel)) {
-			QString qs = XClient::stdToQ ((*list).get<std::string> (m_currentsel));
+		if (it->contains (m_currentsel)) {
+			QString qs = XClient::stdToQ (it->get<std::string> (m_currentsel));
 			compl_list.append (qs);
 		}
 	}

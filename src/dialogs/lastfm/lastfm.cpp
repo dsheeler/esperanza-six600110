@@ -31,6 +31,8 @@
 #include <QCursor>
 #include <QDesktopServices>
 
+#include <algorithm>
+
 #define LASTFM_SEARCH_URL "http://www.last.fm/music/?m=artists&q=%1"
 #define MUSICBRAINZ_URL   "http://musicbrainz.org/artist/%1.html"
 
@@ -257,13 +259,9 @@ LastFmDialog::update_artists (const QString &artist)
 }
 
 bool
-LastFmDialog::num_reply (Xmms::List<unsigned int> const &list, const QString &artist)
+LastFmDialog::num_reply (Xmms::List<int> const &list, const QString &artist)
 {
-    int num = 0;
-    /* we have to loop the list inorder to get the lenght :-( */
-	for (list.first (); list.isValid (); ++list) {
-		num ++;
-	}
+	int num = std::distance(list.begin(), list.end());
 	
 	if (num == 0) {
 		return false;

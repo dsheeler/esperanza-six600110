@@ -25,6 +25,8 @@
 #include <QUrl>
 #include <QFileInfo>
 
+#include <algorithm>
+
 #include "playlistmodel.h"
 
 // Used to check for Protocolversion at compiletime
@@ -223,19 +225,18 @@ PlaylistModel::handle_change (const Xmms::Dict &chg)
 }
 
 bool
-PlaylistModel::handle_list (const Xmms::List< unsigned int > &list)
+PlaylistModel::handle_list (const Xmms::List< int > &list)
 {
 	beginRemoveRows (QModelIndex (), 0, m_plist.size ());
 	m_plist.clear ();
 	endRemoveRows ();
 
-	int i = 0;
-	for (list.first (); list.isValid (); ++list) {
-		i ++;
-	}
+	Xmms::List< int >::const_iterator it_end = list.end();
+	int i = std::distance(list.begin(), it_end);
 	beginInsertRows (QModelIndex (), 0, i);
-	for (list.first (); list.isValid (); ++list) {
-		m_plist.append (*list);
+	for (Xmms::List< int >::const_iterator it = list.begin();
+	     it != it_end; ++it) {
+		m_plist.append (*it);
 	}
 
 	endInsertRows ();

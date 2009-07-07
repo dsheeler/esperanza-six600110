@@ -74,20 +74,23 @@ CollectionModel::set_collection (const Xmms::Coll::Coll &ref)
 }
 
 bool
-CollectionModel::id_list_get (Xmms::List<unsigned int> const &list)
+CollectionModel::id_list_get (Xmms::List<int> const &list)
 {
 	beginRemoveRows (QModelIndex (), 0, m_plist.size ());
 	m_plist.clear ();
 	endRemoveRows ();
 
 	int i = 0;
-	for (list.first (); list.isValid (); ++list) {
+	Xmms::List<int>::const_iterator it_end = list.end();
+	for (Xmms::List<int>::const_iterator it = list.begin();
+	     it != it_end; ++it) {
 		i ++;
 	}
 
 	beginInsertRows (QModelIndex (), 0, i);
-	for (list.first (); list.isValid (); ++list) {
-		m_plist.append (*list);
+	for (Xmms::List<int>::const_iterator it = list.begin();
+	     it != it_end; ++it) {
+		m_plist.append (*it);
 	}
 	endInsertRows ();
 	

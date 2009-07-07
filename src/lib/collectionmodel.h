@@ -57,7 +57,7 @@ class CollectionModel : public QAbstractItemModel
 	private:
 		XClient *m_client;
 
-		bool id_list_get (Xmms::List<unsigned int> const &);
+		bool id_list_get (Xmms::List<int> const &);
 		bool collptr_get (Xmms::Coll::Coll const &);
 
 		QList<unsigned int> m_plist;

@@ -126,7 +126,7 @@ class PlaylistModel : public QAbstractItemModel
 		void entry_changed (uint32_t);
 
 	private:
-		bool handle_list (const Xmms::List< unsigned int > &list);
+		bool handle_list (const Xmms::List< int > &list);
 		bool handle_change (const Xmms::Dict &chg);
 #if (XMMS_IPC_PROTOCOL_VERSION > 10)
 		bool handle_update_pos (const Xmms::Dict &pos);

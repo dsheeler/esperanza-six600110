@@ -179,13 +179,13 @@ XClient::propDictToQHash (const std::string &key,
 		QString val;
 		if (key == "url") {
 			/* This really is wrong ...*/
-			char *c = const_cast<char *>(xmmsc_result_decode_url (NULL, boost::get< std::string >(value).c_str ()));
-			val = QString::fromUtf8 (c);
+			//char *c = const_cast<char *>(xmmsc_result_decode_url (NULL, boost::get< std::string >(value).c_str ()));
+            std::string c(Xmms::decodeUrl(boost::get< std::string >(value)));
+			val = QString::fromStdString (c);
 			val = val.mid (val.lastIndexOf ("/") + 1);
 			if (val.isEmpty ()) {
-				val = QString::fromUtf8 (c);
+				val = QString::fromStdString (c);
 			}
-			free (c);
 		} else {
 			val = QString::fromUtf8 (boost::get< std::string > (value).c_str ());
 		}

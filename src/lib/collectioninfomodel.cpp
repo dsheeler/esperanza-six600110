@@ -49,12 +49,14 @@ CollectionInfoModel::info_callback (const Xmms::List<Xmms::Dict> &list)
 {
     /* convert the first entry in the list to get the headers */
 	QList < QHash < QString, QVariant > > l;
-	for (list.first (); list.isValid (); ++list) {
-	    QHash<QString, QVariant> h = XClient::convert_dict (*list);
+	Xmms::List<Xmms::Dict>::const_iterator it_end = list.end();
+	for (Xmms::List<Xmms::Dict>::const_iterator it = list.begin();
+	     it != it_end; ++it) {
+		QHash<QString, QVariant> h = XClient::convert_dict (*it);
 		l.append (h);
 	}
 	set_data (l);
-	
+
 	return true;
 }
 

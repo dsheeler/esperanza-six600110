@@ -400,12 +400,14 @@ StreamingBookmarks::dbclicked (const QModelIndex &idx)
 bool
 StreamingBookmarks::handle_list (const Xmms::List<std::string> &list)
 {
-    bool r = false;
-    for (list.first (); list.isValid (); ++list) {
-        if (*list == "_esperanza_bookmarks") {
-            r = true;
-            break;
-        }
+	bool r = false;
+	Xmms::List<std::string>::const_iterator it_end = list.end();
+	for (Xmms::List<std::string>::const_iterator it = list.begin();
+	     it != it_end; ++it) {
+		if (*it == "_esperanza_bookmarks") {
+			r = true;
+			break;
+		}
 	}
 
 	if (!r) {
