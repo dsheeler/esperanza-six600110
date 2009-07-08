@@ -60,7 +60,7 @@ browser:
 			goto browser;
 		} else {
 			QErrorMessage *err = new QErrorMessage (parent);
-			err->showMessage ("Your XMMS_PATH enviroment sucks. Fix it and restart the Application");
+			err->showMessage ("Your XMMS_PATH environment sucks. Fix it and restart the Application");
 			err->exec ();
 			return false;
 		}
