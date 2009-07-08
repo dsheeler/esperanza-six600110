@@ -111,27 +111,17 @@ PlaylistModel::handle_pls_loaded (const std::string &name)
 	return true;
 }
 
-#if (XMMS_IPC_PROTOCOL_VERSION > 10)
 bool
 PlaylistModel::handle_update_pos (const Xmms::Dict &posdict)
 {
 	QString changed_pl = XClient::stdToQ (posdict.get<std::string> ("name"));
 	if (changed_pl == m_name) {
-		uint32_t pos = posdict.get<uint32_t> ("position");
+		int32_t pos = posdict.get<int32_t> ("position");
 		m_current_pos = pos;
 		emit dataChanged(index (pos, 0), index (pos, m_columns.size ()));
 	}
 	return true;
 }
-#else
-bool
-PlaylistModel::handle_update_pos (const uint32_t &pos)
-{
-	m_current_pos = pos;
-	emit dataChanged(index (pos, 0), index (pos, m_columns.size ()));
-	return true;
-}
-#endif
 
 QList<QString>
 PlaylistModel::columns () const
@@ -166,7 +156,7 @@ PlaylistModel::handle_change (const Xmms::Dict &chg)
 	}
 
 	if (chg.contains ("id")) {
-		id = chg.get<uint32_t> ("id");
+		id = chg.get<int32_t> ("id");
 	}
 
 	if (chg.contains ("name")) {

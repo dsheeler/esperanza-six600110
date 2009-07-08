@@ -102,14 +102,14 @@ VolumeButton::handle_volume (const Xmms::Dict &d)
 	/* XXX: this function really should do each and sum / split the channels */
 	if (d.contains ("master")) {
 		if (!m_slider->isSliderDown ()) {
-			m_slider->setValue (d.get<uint32_t> ("master"));
-			m_volbar->setValue (d.get<uint32_t> ("master"));
+			m_slider->setValue (d.get<int32_t> ("master"));
+			m_volbar->setValue (d.get<int32_t> ("master"));
 		}
 		m_channels = 1;
 	} else if (d.contains ("left") && d.contains ("right")) {
 		if (!m_slider->isSliderDown ()) {
-			m_slider->setValue ((d.get<uint32_t> ("left") + d.get<uint32_t> ("right")) / 2);
-			m_volbar->setValue ((d.get<uint32_t> ("left") + d.get<uint32_t> ("right")) / 2);
+			m_slider->setValue ((d.get<int32_t> ("left") + d.get<int32_t> ("right")) / 2);
+			m_volbar->setValue ((d.get<int32_t> ("left") + d.get<int32_t> ("right")) / 2);
 		}
 		m_channels = 2;
 	}
