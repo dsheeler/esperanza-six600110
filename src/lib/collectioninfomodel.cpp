@@ -15,12 +15,12 @@
  */
 
 #include "collectioninfomodel.h"
+#include <QDebug>
 
 CollectionInfoModel::CollectionInfoModel (QObject *parent, XClient *client, const bool &all_field)
 {
     m_client = client;
     m_all_field = all_field;
-    
 }
 
 std::list<std::string>
@@ -30,7 +30,7 @@ CollectionInfoModel::str_list_to_std (const QList<QString> &list)
     for (int i = 0; i < list.size (); i ++) {
         ret.push_back (XClient::qToStd (list.value (i)));
     }
-    
+
     return ret;
 }
 
@@ -67,7 +67,14 @@ CollectionInfoModel::set_data (const QList < QHash < QString, QVariant > > &data
 	beginRemoveRows (QModelIndex (), 0, rowCount ());
     clear ();
 	endRemoveRows ();
-	
+
+	if (data.size() == 0)
+	{
+		// FIXME: This should not happen, but it does
+		qDebug() << "FIXME:" << __FILE__ << " line: " << __LINE__;
+		return;
+	}
+
     /* take the headers and add the columns */
     QStringList s = data[0].keys ();
     setColumnCount (s.size ());

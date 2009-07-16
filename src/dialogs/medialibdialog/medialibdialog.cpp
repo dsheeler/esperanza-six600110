@@ -200,7 +200,8 @@ MedialibDialog::compl_reply (const Xmms::List <Xmms::Dict> &list)
 		/* This seems to happen if a album is "" */
 		if (it->contains (m_currentsel)) {
 			QString qs = XClient::stdToQ (it->get<std::string> (m_currentsel));
-			compl_list.append (qs);
+			if (! qs.isEmpty())
+				compl_list.append (qs);
 		}
 	}
 

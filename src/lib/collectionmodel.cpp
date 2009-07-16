@@ -16,6 +16,7 @@
 
 #include "collectionmodel.h"
 
+#include <QDebug>
 #include <QAbstractItemModel>
 
 CollectionModel::CollectionModel (QObject *parent, XClient *client) : QAbstractItemModel (parent)
@@ -85,6 +86,12 @@ CollectionModel::id_list_get (Xmms::List<int> const &list)
 	for (Xmms::List<int>::const_iterator it = list.begin();
 	     it != it_end; ++it) {
 		i ++;
+	}
+
+	if (i == 0) {
+		// FIXME: This should not happen, but it does
+		qDebug() << "FIXME: "<< __FILE__ << " line: " << __LINE__;
+		return true;
 	}
 
 	beginInsertRows (QModelIndex (), 0, i);

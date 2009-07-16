@@ -145,7 +145,7 @@ XClient::dictToQHash (const std::string &key,
 	} else {
 		QString val;
 		val = QString::fromUtf8 (boost::get< std::string > (value).c_str ());
-        hash.insert (stdToQ (key), QVariant (val));
+		hash.insert (stdToQ (key), QVariant (val));
 	}
 }
 
