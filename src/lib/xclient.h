@@ -80,7 +80,7 @@ class XClient : public QObject {
         };
         
         static QDir esperanza_dir ();
-		void setDisconnectCallback (const Xmms::DisconnectCallback::slot_type &slot) { m_client->setDisconnectCallback (slot); }
+		void setDisconnectCallback (const Xmms::DisconnectCallback::value_type &slot) { m_client->setDisconnectCallback (slot); }
 		const Xmms::Collection* collection () { if (m_client && m_client->isConnected ()) return &m_client->collection; else return NULL; }
 		const Xmms::Playlist* playlist () { if (m_client && m_client->isConnected ()) return &m_client->playlist; else return NULL; }
 		const Xmms::Playback* playback () { if (m_client && m_client->isConnected ()) return &m_client->playback; else return NULL; }
