@@ -100,8 +100,8 @@ XClientCache::handle_bindata (const Xmms::bin &data, const QString &id)
 	}
 
 	/* conserve memory client side */
-	if (i.width () < 300) {
-		i = i.scaledToWidth (300, Qt::SmoothTransformation);
+        if (i.height () < 750) {
+                i = i.scaledToHeight (750, Qt::SmoothTransformation);
 	}
 
 	QPixmapCache::insert (id, i);
@@ -126,16 +126,14 @@ XClientCache::get_pixmap (uint32_t id)
 	if (m_info[id].contains ("picture_front")) {
 		QString hash = m_info[id]["picture_front"].toString ();
 		QPixmap p;
-
 		if (!QPixmapCache::find (hash, p)) {
-			m_client->bindata ()->retrieve (hash.toStdString ()) (
-										boost::bind (&XClientCache::handle_bindata, this, _1, hash));
-			QPixmapCache::insert (hash, QPixmap ());
-			m_icon_map[hash].append (id);
+                    m_client->bindata ()->retrieve (hash.toStdString ()) (
+                            boost::bind (&XClientCache::handle_bindata, this, _1, hash));
+                    m_icon_map[hash].append (id);
 		}
-
 		return p;
-	}
+        }
+
 	return QPixmap ();
 }
 

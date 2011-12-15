@@ -24,6 +24,7 @@
 #include <QSettings>
 #include <QUrl>
 #include <QFileInfo>
+#include <QMessageBox>
 
 #include <algorithm>
 
@@ -36,25 +37,76 @@ PlaylistModel::PlaylistModel (QObject *parent, XClient *client, const QString &n
 {
 //	m_columns.append ("#");
 	m_columns.append ("Artist");
+        m_columns.append("Album");
 	m_columns.append ("Title");
+        m_columns.append ("TrackNr");
+        m_columns.append ("Timesplayed");
 
 //	m_colfallback.append ("");
 	m_colfallback.append ("");
+        m_colfallback.append ("");
+        m_colfallback.append ("");
+        m_colfallback.append ("");
 	m_colfallback.append ("url");
 
+        m_cached_size.append (QSize ());
 	m_cached_size.append (QSize ());
 	m_cached_size.append (QSize ());
 	m_cached_size.append (QSize ());
+        m_cached_size.append (QSize ());
 
 	connect (client, SIGNAL(gotConnection (XClient *)), this, SLOT (got_connection (XClient *))); 
 	connect (client->cache (), SIGNAL(entryChanged (uint32_t)), this, SLOT (entry_changed (uint32_t)));
 	
 	m_isactive = (name == QLatin1String ("_active"));
 	
-    m_name = name;
-    
+        m_name = name;
+        m_client = NULL;
+
     if (client->isConnected ()) {
         got_connection (client);
+    }
+}
+
+void PlaylistModel::sort(int column, Qt::SortOrder order) {
+
+    if (m_client && m_client->isConnected()) {
+        std::list< std::string > properties;
+        std::string prop, playlistName;
+        QString qprop;
+
+        qprop = m_columns.at(column).toLower();
+        if (qprop == "artist") {
+            properties.push_back("album");
+            properties.push_back("partofset");
+            properties.push_back("tracknr");
+            properties.push_back("timesplayed");
+        } else if (qprop == "album") {
+            properties.push_back("partofset");
+            properties.push_back("tracknr");
+            properties.push_back("artist");
+            properties.push_back("timesplayed");
+        } else if (qprop == "timesplayed") {
+            properties.push_back("album");
+            properties.push_back("partofset");
+            properties.push_back("tracknr");
+            properties.push_back("artist");
+
+        }
+        prop.assign(XClient::qToStd( qprop ));
+        playlistName.assign(m_client->playlist()->DEFAULT_PLAYLIST);
+        properties.push_front(prop);
+
+        if (order == Qt::DescendingOrder) {
+            (*properties.begin()).insert(0,1,'-');
+        }
+
+        try {
+            m_client->playlist()->sort(properties);
+        } catch (std::exception e) {
+            QMessageBox::information(0, tr("Uh Oh"), tr("Exception Occured While Trying to Sort Playlist on Server"));
+        }
+
     }
 }
 
@@ -174,11 +226,13 @@ PlaylistModel::handle_change (const Xmms::Dict &chg)
 			beginInsertRows (idx, pos, pos);
 			m_plist.append (id);
 			endInsertRows ();
+                        emit this->entryAdded();
 			break;
 		case XMMS_PLAYLIST_CHANGED_INSERT:
 			beginInsertRows (idx, pos, pos);
 			m_plist.insert (pos, id);
 			endInsertRows ();
+                        emit this->entryAdded();
 			break;
 		case XMMS_PLAYLIST_CHANGED_MOVE:
 			npos = chg.get<int32_t> ("newposition");
@@ -322,12 +376,12 @@ PlaylistModel::data (const QModelIndex &index, int role) const
 		return QVariant (m_plist[index.row ()]);
 	}
 
-	if (role == Qt::SizeHintRole) {
-		if (m_cached_size[index.column ()].isValid ()) {
-			return QVariant (m_cached_size[index.column ()]);
-		}
-		return QVariant ();
-	}
+//	if (role == Qt::SizeHintRole) {
+//		if (m_cached_size[index.column ()].isValid ()) {
+//			return QVariant (m_cached_size[index.column ()]);
+//		}
+//		return QVariant ();
+//	}
 
 	if (role == Qt::DisplayRole || role == Qt::ToolTipRole) {
 		QString key = m_columns[index.column ()].toLower ();

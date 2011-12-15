@@ -110,6 +110,7 @@ class PlaylistModel : public QAbstractItemModel
 		};
 
 		void set_playlist (const QString &);
+                void sort(int column, Qt::SortOrder order);
 
 	protected:
 		XClient *m_client;
@@ -120,6 +121,7 @@ class PlaylistModel : public QAbstractItemModel
 		
 	signals:
 		void entryMoved (const QModelIndex &, const QModelIndex &);
+                void entryAdded ();
 
 	public slots:
 		void got_connection (XClient *);

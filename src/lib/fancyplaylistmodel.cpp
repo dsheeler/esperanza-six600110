@@ -31,15 +31,21 @@
 FancyPlaylistModel::FancyPlaylistModel (QObject *parent, XClient *client) : PlaylistModel (parent, client)
 {
 	QStringList c;
-	c.append ("Artist");
+        c.append ("Artist");
+        c.append ("Album");
 	c.append ("Title");
+        c.append ("TrackNr");
+        c.append ("Timesplayed");
 
 	setColumns (c);
 
 	c.clear ();
 
-	c.append ("");
-	c.append ("url");
+        c.append ("Channel");
+        c.append ("url");
+        c.append ("Channel");
+        c.append ("");
+        c.append ("");
 
 	setColumnFallback (c);
 }
@@ -111,7 +117,7 @@ FancyPlaylistModel::decoration_data (const QModelIndex &index, int role) const
 	}
 
 	if (role == Qt::DisplayRole) {
-		if (index.column () == m_columns.size () - 1) {
+                if (index.column () == 1) {
 			QString str;
 			QSettings s;
 

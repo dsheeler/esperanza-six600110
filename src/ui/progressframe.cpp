@@ -211,8 +211,8 @@ void
 ProgressFrame::mousePressEvent (QMouseEvent *event)
 {
 	QPoint p = mapTo (window (), event->pos ());
-	m_diffx = p.x ();
-	m_diffy = p.y ();
+        m_diffx = p.x () - this->x();
+        m_diffy = p.y () - this->y();
 
 	/* some windows showing this don't want to seek */
 	if (m_seek) {

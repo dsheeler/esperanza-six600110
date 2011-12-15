@@ -36,7 +36,7 @@ class PlaylistView : public QTreeView
 
 		void keyPressEvent (QKeyEvent *);
 		void setModel (QAbstractItemModel *);
-
+                int rowCount();
 		/*
 		PlaylistModel *model () const {
 			return m_model;
@@ -50,6 +50,8 @@ class PlaylistView : public QTreeView
 		void moved (const QModelIndex &, const QModelIndex &);
 		void jump_pos (const QModelIndex &);
 		bool handle_status (const Xmms::Playback::Status &);
+                //void resizeColumnsToContents();
+               // void sortByColumn(int column, Qt::SortOrder order);
 
 	signals:
 		void selectedID (uint32_t);

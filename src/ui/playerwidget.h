@@ -67,9 +67,15 @@ class PlayerWidget : public QMainWindow
 		void snett_pressed (QMouseEvent *);
 		void add_local_file ();
 		void add_local_dir ();
+                void jump_begin ();
+                void jump_end ();
 		void jump_pos ();
 		void check_hide ();
 		void toggle_hide ();
+                void playlist_create ();
+                void playlist_load ();
+                void playlist_load(QString name);
+                void playlist_delete();
 
 	private slots:
 		void plus_pressed (QMouseEvent *);
@@ -79,7 +85,7 @@ class PlayerWidget : public QMainWindow
 		void add_remote_file ();
 		void add_url ();
 		void min_pressed ();
-
+                void update_album_art(uint32_t);
 		void remove_selected ();
 		void remove_all ();
 
@@ -102,14 +108,28 @@ class PlayerWidget : public QMainWindow
 		FancyPlaylistView *m_playlist;
 		PlayerButton *m_playbutt;
 		PlayerButton *m_playstop;
-		
+
 		ShortcutManager *m_sm;
 
+                QLabel *m_albumArt;
+
+                QMenu *m_fileMenu;
+                QMenu *m_playlistMenu;
+                //    QLabel *m_currentPlaylist;
+
+                QLabel *m_playlistLabel;
+                QComboBox *m_currentPlaylist;
 		bool handle_status (const Xmms::Playback::Status &);
 		void handle_disconnect ();
 		void process_dialog_plugin ();
+                bool handle_playlists(const Xmms::List<std::string> &playlists);
+                bool populate_playlists(const Xmms::List<std::string> &playlists);
+                bool handle_playlist_load(const std::string name);
+                bool handle_playlist_name(const std::string name);
+                bool handle_playlist_delete(const Xmms::List<std::string> &playlists);
 
 		uint32_t m_current_id;
+
 
 		ProgressFrame *m_pf;
 		VolumeBar *m_volbar;

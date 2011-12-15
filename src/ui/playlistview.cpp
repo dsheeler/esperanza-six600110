@@ -23,6 +23,8 @@
 #include <QHeaderView>
 #include <QPainter>
 #include <QSettings>
+#include <QList>
+#include <QMessageBox>
 
 PlaylistView::PlaylistView (QWidget *parent, XClient *client) : QTreeView (parent)
 {
@@ -34,26 +36,53 @@ PlaylistView::PlaylistView (QWidget *parent, XClient *client) : QTreeView (paren
 	setItemsExpandable (false);
 	setRootIsDecorated (false);
 	setTabKeyNavigation (false);
-	setTextElideMode (Qt::ElideNone);
-
+        setTextElideMode (Qt::ElideRight);
+        setSortingEnabled(true);
 	setVerticalScrollBarPolicy (Qt::ScrollBarAlwaysOn);
+        //setUniformRowHeights(true);
 
 	setDragEnabled (true);
 	setAcceptDrops (true);
 	setDropIndicatorShown (true);
-//	setDragDropMode (QAbstractItemView::DragDrop);
+        //	setDragDropMode (QAbstractItemView::DragDrop);
 
-    setSelectionMode (QAbstractItemView::ExtendedSelection);
-    setSelectionBehavior (QAbstractItemView::SelectRows);
+        setSelectionMode (QAbstractItemView::ExtendedSelection);
+        setSelectionBehavior (QAbstractItemView::SelectRows);
 
 	connect (client, SIGNAL(gotConnection (XClient *)),
 			 this, SLOT (got_connection (XClient *))); 
 
-	setIconSize (QSize (75, 75));
+        setIconSize (QSize (500, 500));
 
-	QHeaderView *head = header ();
-	connect (head, SIGNAL (sectionResized (int, int, int)), this, SLOT (head_size (int, int, int)));
-}
+        //QHeaderView *head = header ();
+        //connect (head, SIGNAL (sectionResized (int, int, int)), this, SLOT (head_size (int, int, int)));
+        //connect (head, SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(sortByColumn(int, Qt::SortOrder)));
+
+
+    }
+
+//void PlaylistView::sortByColumn(int column, Qt::SortOrder order) {
+//    std::list< std::string > properties;
+//    std::string prop, playlistName;
+//    QString qprop;
+//
+//    if (m_client && m_client->isConnected()) {
+//        QList<QString> m_columns =  m_model->columns();
+//        qprop = m_columns.at(column).toLower();
+//        prop.assign(XClient::qToStd( qprop ));
+//        playlistName.assign(m_client->playlist()->DEFAULT_PLAYLIST);
+//        properties.push_front(prop);
+//
+//        try {
+//            m_client->playlist()->sort(properties);
+//            QMessageBox::information(0, tr("SORTSORTSORTSORT"), tr("Sort Called"));
+//        } catch (std::exception e) {
+//            QMessageBox::information(0, tr("Uh Oh"), tr("Exception Occured While Trying to Sort Playlist on Server"));
+//        }
+//
+//    }
+//
+//}
 
 void
 PlaylistView::setModel (QAbstractItemModel *model)
@@ -67,28 +96,39 @@ PlaylistView::setModel (QAbstractItemModel *model)
 	connect (m_model, SIGNAL (entryMoved (const QModelIndex &, const QModelIndex &)),
 			 this, SLOT (moved (const QModelIndex &, const QModelIndex &)));
 
-    m_selections = new QItemSelectionModel (m_model);
+        m_selections = new QItemSelectionModel (m_model);
 	setSelectionModel (m_selections);
 
 	QHeaderView *head = header ();
 	QSettings s;
-	head->setResizeMode (0, QHeaderView::Interactive);
-	head->resizeSection (0, s.value ("playlist/section0", 180).toInt ());
+        head->setResizeMode( QHeaderView::ResizeToContents);
+        //head->resizeSections(QHeaderView::ResizeToContents);
+        //head->setDefaultSectionSize(500);
+        //head->resizeSection (0, s.value ("playlist/section0", 180).toInt ());
+
+        //resizeColumnsToContents();
+    }
+
+int PlaylistView::rowCount() {
+    return m_model->rowCount(QModelIndex());
 }
 
 void
 PlaylistView::rows_inserted ()
 {
-	QModelIndex idx = m_model->index (0, 0);
-	if (!idx.isValid ())
-		return;
-	if (!m_model->cached_size (idx.column ()).isValid () && idx.internalId () == -1) {
-		m_model->set_cached_size (idx.column (), sizeHintForIndex (idx));
-	}
-	idx = m_model->index (0, 1);
-	if (!m_model->cached_size (idx.column ()).isValid () && idx.internalId () == -1) {
-		m_model->set_cached_size (idx.column (), sizeHintForIndex (idx));
-	}
+//    QHeaderView *head = header ();
+//    head->resizeSections(QHeaderView::ResizeToContents);
+//	QModelIndex idx = m_model->index (0, 0);
+//	if (!idx.isValid ())
+//		return;
+//	if (!m_model->cached_size (idx.column ()).isValid () && idx.internalId () == -1) {
+//		m_model->set_cached_size (idx.column (), sizeHintForIndex (idx));
+//	}
+//	idx = m_model->index (0, 1);
+//	if (!m_model->cached_size (idx.column ()).isValid () && idx.internalId () == -1) {
+//		m_model->set_cached_size (idx.column (), sizeHintForIndex (idx));
+//	}
+        //resizeColumnsToContents();
 }
 
 void
@@ -139,6 +179,14 @@ PlaylistView::got_connection (XClient *client)
 	client->playback ()->broadcastStatus () (Xmms::bind (&PlaylistView::handle_status, this));
 }
 
+//void PlaylistView::resizeColumnsToContents() {
+   // QMessageBox::information(0, tr("resizing"), tr("resizing"));
+//    QList<QString> columns = m_model->columns();
+//    for (int i = 0; i < columns.size(); i++) {
+//         this->resizeColumnToContents(i);
+//    }
+//}
+
 bool
 PlaylistView::handle_status (const Xmms::Playback::Status &st)
 {
@@ -178,10 +226,10 @@ PlaylistView::getSelection ()
 void
 PlaylistView::head_size (int c, int o, int n)
 {
-	if (c == 0) {
-		QSettings s;
-		s.setValue ("playlist/section0", n);
-	}
+//	if (c == 0) {
+//		QSettings s;
+//		s.setValue ("playlist/section0", n);
+//	}
 }
 
 void

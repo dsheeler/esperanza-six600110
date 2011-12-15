@@ -70,7 +70,7 @@ FancyPlaylistView::FancyPlaylistView (QWidget *parent, XClient *client) : Playli
 	connect (m_client->settings (), SIGNAL (settingsChanged ()),
 			 this, SLOT (changed_settings ()));
 
-	setIconSize (QSize (75, 75));
+        setIconSize (QSize (500, 500));
 }
 
 void
@@ -86,7 +86,7 @@ FancyPlaylistView::mousePressEvent (QMouseEvent *ev)
 		return;
 	}
 
-	QTreeView::mousePressEvent (ev);
+        QTreeView::mousePressEvent (ev);
 }
 
 void
@@ -110,10 +110,11 @@ FancyPlaylistView::item_selected (const QItemSelection & selected, const QItemSe
 {
 	QSettings s;
 
-	if (s.value ("playlist/compactmode").toBool ())
-		return;
+        collapseAll ();
 
-	collapseAll ();
+        //if (s.value ("playlist/compactmode").toBool ())
+        //	return;
+
 
 	QModelIndexList l = getSelection ();
 
@@ -128,14 +129,14 @@ FancyPlaylistView::item_selected (const QItemSelection & selected, const QItemSe
 			return;
 		}
 
-		setExpanded (n, true);
+                //setExpanded (n, true);
 
-		QModelIndex c = n.child (0, 0);
-		scrollTo (c);
+        //	QModelIndex c = n.child (0, 0);
+        //	scrollTo (c);
 		
 		emit selectedID (n.data (PlaylistModel::MedialibIdRole).toUInt ());
 	}
-	
+        //setIconSize (QSize (500, 500));
 	update ();
 }
 
