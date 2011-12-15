@@ -32,6 +32,8 @@
 #include <QResizeEvent>
 #include <QCheckBox>
 #include <QCompleter>
+#include <QMap>
+#include <QMessageBox>
 
 MedialibDialog::MedialibDialog (QWidget *parent, XClient *client) : QDialog (parent)
 {
@@ -180,7 +182,7 @@ MedialibDialog::load_compl_list (int i)
 
 	m_currentsel = str;
 
-	arg.push_front (str);
+        arg.push_front (str);
 
 	m_client->collection ()->queryInfos (univ, arg, arg, 0, 0, arg) (Xmms::bind (&MedialibDialog::compl_reply, this));
 
@@ -231,15 +233,18 @@ MedialibDialog::keyPressEvent (QKeyEvent *ev)
 void
 MedialibDialog::plus_pressed (QMouseEvent *ev)
 {
-	QList<uint32_t> ids = m_list->get_selection ();
+    QList<uint32_t> ids = m_list->get_selection ();
 
-	if (ids.size () == 0) {
-		ids = m_list->get_all ();
-	}
 
-	for (int i = 0; i < ids.size (); i++) {
-		m_client->playlist ()->addId (ids.at (i)) ();
-	}
+    if (ids.size () == 0) {
+        ids = m_list->get_all ();
+    }
+
+    for (int i = 0; i < ids.size (); i++) {
+        m_client->playlist ()->addId (ids.at (i)) ();
+    }
+
+    QMessageBox::information(this, tr("Added Files"), tr("Successfully Added Files to the Playlist"));
 }
 
 void
