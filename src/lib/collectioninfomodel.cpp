@@ -40,8 +40,8 @@ CollectionInfoModel::set_collection (const Xmms::Coll::Coll &ref,
                                      const QList<QString> &order,
                                      const QList<QString> &group) 
 {
-    m_client->collection ()->queryInfos (ref, str_list_to_std (fetch), str_list_to_std (order), 0, 0, str_list_to_std (group))
-										(Xmms::bind (&CollectionInfoModel::info_callback, this));
+	m_client->collection ()->queryInfos (ref, str_list_to_std (fetch), str_list_to_std (order), 0, 0, str_list_to_std (group))
+	        (Xmms::bind (&CollectionInfoModel::info_callback, this));
 }
 
 bool
@@ -53,8 +53,10 @@ CollectionInfoModel::info_callback (const Xmms::List<Xmms::Dict> &list)
 	for (Xmms::List<Xmms::Dict>::const_iterator it = list.begin();
 	     it != it_end; ++it) {
 		QHash<QString, QVariant> h = XClient::convert_dict (*it);
-		l.append (h);
+		if (!h.isEmpty ())
+			l.append (h);
 	}
+	
 	set_data (l);
 
 	return true;
@@ -65,7 +67,7 @@ CollectionInfoModel::set_data (const QList < QHash < QString, QVariant > > &data
 {
 	/* Clear the model */
 	beginRemoveRows (QModelIndex (), 0, rowCount ());
-    clear ();
+	clear ();
 	endRemoveRows ();
 
 	if (data.size() == 0)
