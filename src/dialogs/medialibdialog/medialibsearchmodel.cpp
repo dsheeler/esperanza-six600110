@@ -44,8 +44,8 @@ void
 MedialibSearchModel::search (uint32_t key, const QString &search, const bool &active)
 {
     QString sp (search);
-    sp.push_front ('%');
-    sp.push_back ('%');
+    sp.push_front ('*');
+    sp.push_back ('*');
     
     std::string val = XClient::qToStd (sp);
     
