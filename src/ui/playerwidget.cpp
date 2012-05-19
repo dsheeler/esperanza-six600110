@@ -137,7 +137,10 @@ PlayerWidget::PlayerWidget (QWidget *parent, XClient *client) : QMainWindow (par
 
 	pflay->addWidget (m_playbutt);
 	pflay->addWidget (fwd);
-
+	
+	VolumeButton *volume = new VolumeButton (dummy, m_client);
+	pflay->addWidget (volume);
+	
 	m_pf = new ProgressFrame (this, client);
 	pflay->addWidget (m_pf);
 
@@ -277,7 +280,6 @@ void PlayerWidget::update_album_art(uint32_t id)
 
 bool PlayerWidget::populate_playlists(const Xmms::List<std::string> &playlists) 
 {
-	QStringList items;
 	std::string str;
 	this->m_currentPlaylist->clear();
 	foreach(str, playlists) {

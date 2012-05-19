@@ -17,20 +17,23 @@
 
 #include "volumebar.h"
 #include "playerbutton.h"
+#include "xclient.h"
 
 #include <QVBoxLayout>
 #include <QSettings>
 #include <QMouseEvent>
 #include <QApplication>
 #include <QSettings>
+#include <QHash>
 
-VolumeButton::VolumeButton (QWidget *parent, XClient *client) : QWidget (parent), m_channels (0)
+VolumeButton::VolumeButton (QWidget *parent, XClient *client) : QWidget (parent), m_num_channels (0)
 {
 	m_client = client;
 
 	setMaximumSize (100, 20);
 	setToolTip ("Volumebar");
 
+	m_channel_names = new QStringList ();
 	/* Create the slider */
 	m_slider = new QSlider (Qt::Horizontal, this);
 	m_slider->hide ();
@@ -96,34 +99,41 @@ VolumeButton::got_connection (XClient *c)
 	m_client->playback ()->broadcastVolumeChanged () (Xmms::bind (&VolumeButton::handle_volume, this));
 }
 
+bool 
+VolumeButton::get_channel_names(const Xmms::Dict &d)
+{
+	
+	this->m_num_channels = 0;
+	QHash<QString, QVariant> qh = XClient::convert_dict(d);
+	this->m_channel_names->append(qh.keys());
+	this->m_num_channels = this->m_channel_names->size();
+	return true;
+}
+
 bool
 VolumeButton::handle_volume (const Xmms::Dict &d)
 {
-	/* XXX: this function really should do each and sum / split the channels */
-	if (d.contains ("master")) {
-		if (!m_slider->isSliderDown ()) {
-			m_slider->setValue (d.get<int32_t> ("master"));
-			m_volbar->setValue (d.get<int32_t> ("master"));
-		}
-		m_channels = 1;
-	} else if (d.contains ("left") && d.contains ("right")) {
-		if (!m_slider->isSliderDown ()) {
-			m_slider->setValue ((d.get<int32_t> ("left") + d.get<int32_t> ("right")) / 2);
-			m_volbar->setValue ((d.get<int32_t> ("left") + d.get<int32_t> ("right")) / 2);
-		}
-		m_channels = 2;
+	get_channel_names(d);
+	
+	double sum = 0.0;
+	
+	foreach (QString chanName, *m_channel_names) {
+		sum += d.get<int32_t> (chanName.toStdString ());
 	}
+	sum /= m_num_channels;
+	
+	m_slider->setValue (sum);
+	m_volbar->setValue (sum);
+	
 	return true;
 }
 
 void
 VolumeButton::set_volume (int vol)
 {
-	if (m_channels == 1) {
-		m_client->playback ()->volumeSet ("master", vol) ();
-	} else if (m_channels == 2) {
-		m_client->playback ()->volumeSet ("left", vol) ();
-		m_client->playback ()->volumeSet ("right", vol) ();
+	m_client->playback ()->volumeGet () (Xmms::bind (&VolumeButton::get_channel_names, this));
+	foreach (QString chanName, *m_channel_names) {
+		m_client->playback ()->volumeSet(chanName.toStdString (), vol);
 	}
 }
 

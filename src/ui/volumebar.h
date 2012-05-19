@@ -70,9 +70,12 @@ class VolumeButton : public QWidget
 
 		XClient *m_client;
 
-		uint32_t m_channels;
+		uint32_t m_num_channels;
+		QStringList *m_channel_names;
+		
 		bool handle_volume (const Xmms::Dict &);
-
+		bool get_channel_names (const Xmms::Dict &);
+		
 		QHBoxLayout *m_hbox;
 		VolumeBar *m_volbar;
 };
