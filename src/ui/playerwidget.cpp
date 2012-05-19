@@ -70,144 +70,140 @@ PlayerWidget::PlayerWidget (QWidget *parent, XClient *client) : QMainWindow (par
 
 	QWidget *dummy = new QWidget (main_w);
 
-        QGridLayout *layout = new QGridLayout (main_w);
+	QGridLayout *layout = new QGridLayout (main_w);
 
-        m_fileMenu = QMainWindow::menuBar()->addMenu(tr("File"));
-        m_fileMenu->addAction(tr("Quit"), this, SLOT(quit()));
+	m_fileMenu = QMainWindow::menuBar()->addMenu(tr("File"));
+	m_fileMenu->addAction(tr("Quit"), this, SLOT(quit()));
 
-        m_playlistMenu = QMainWindow::menuBar()->addMenu(tr("Playlist"));
+	m_playlistMenu = QMainWindow::menuBar()->addMenu(tr("Playlist"));
 
-        m_playlistMenu->addAction (tr ("Add local file"), this, SLOT (add_local_file ()));
-        m_playlistMenu->addAction (tr ("Add local dir"), this, SLOT (add_local_dir ()));
-        m_playlistMenu->addAction (tr ("Add URL"), this, SLOT (add_url ()));
-        m_playlistMenu->addSeparator ();
+	m_playlistMenu->addAction (tr ("Add local file"), this, SLOT (add_local_file ()));
+	m_playlistMenu->addAction (tr ("Add local dir"), this, SLOT (add_local_dir ()));
+	m_playlistMenu->addAction (tr ("Add URL"), this, SLOT (add_url ()));
+	m_playlistMenu->addSeparator ();
 
-        m_playlistMenu->addAction (tr ("Remove selected"), this, SLOT (remove_selected ()));
-        m_playlistMenu->addAction (tr ("Clear"), this, SLOT (remove_all ()));
-        m_playlistMenu->addSeparator ();
-        m_playlistMenu->addAction (tr ("Shuffle"), this, SLOT(shuffle_pressed()));
-        m_playlistMenu->addSeparator();
-        m_playlistMenu->addAction (tr("Load"), this, SLOT(playlist_load()));
-        m_playlistMenu->addAction (tr("Create"), this, SLOT(playlist_create()));
-        m_playlistMenu->addAction (tr("Delete"), this, SLOT(playlist_delete()));
-
-
+	m_playlistMenu->addAction (tr ("Remove selected"), this, SLOT (remove_selected ()));
+	m_playlistMenu->addAction (tr ("Clear"), this, SLOT (remove_all ()));
+	m_playlistMenu->addSeparator ();
+	m_playlistMenu->addAction (tr ("Shuffle"), this, SLOT(shuffle_pressed()));
+	m_playlistMenu->addSeparator();
+	m_playlistMenu->addAction (tr("Load"), this, SLOT(playlist_load()));
+	m_playlistMenu->addAction (tr("Create"), this, SLOT(playlist_create()));
+	m_playlistMenu->addAction (tr("Delete"), this, SLOT(playlist_delete()));
 
 
-        m_albumArt = new QLabel(this);
-        m_albumArt->setScaledContents(false);
-        layout->addWidget(m_albumArt, 0,1,1, 1);
+
+
+	m_albumArt = new QLabel(this);
+	m_albumArt->setScaledContents(false);
+	layout->addWidget(m_albumArt, 0,1,1, 1);
 
 	m_playlist = new FancyPlaylistView (this, client);
 	connect (m_playlist, SIGNAL (selectedID (uint32_t)), this, SLOT (handle_selected_id (uint32_t)));
-        connect (m_playlist, SIGNAL (selectedID (uint32_t)), this, SLOT (update_album_art (uint32_t)));
+	connect (m_playlist, SIGNAL (selectedID (uint32_t)), this, SLOT (update_album_art (uint32_t)));
 
-        layout->addWidget (m_playlist, 0, 0, 1, 1);
+	layout->addWidget (m_playlist, 0, 0, 1, 1);
 
 	QHBoxLayout *pflay = new QHBoxLayout ();
 	pflay->setMargin (0);
+	
+	PlayerButton *back = new PlayerButton (dummy, ":images/back.png");
+	connect (back, SIGNAL (clicked (QMouseEvent *)),
+	         this, SLOT (back_pressed ()));
+	
+	PlayerButton *fwd = new PlayerButton (dummy, ":images/forward.png");
+	connect (fwd, SIGNAL (clicked (QMouseEvent *)),
+	         this, SLOT (fwd_pressed ()));
+	m_playstop = new PlayerButton (dummy, ":images/playstop.png");
+	connect (m_playstop, SIGNAL (clicked (QMouseEvent *)),
+	         this, SLOT (playstop_pressed ()));
 
-        PlayerButton *back = new PlayerButton (dummy, ":images/back.png");
-        connect (back, SIGNAL (clicked (QMouseEvent *)),
-                         this, SLOT (back_pressed ()));
+	m_currentPlaylist = new QComboBox(this);
+	m_currentPlaylist->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+	m_playlistLabel = new QLabel(tr("Playlist: "),this);
 
-        PlayerButton *fwd = new PlayerButton (dummy, ":images/forward.png");
-        connect (fwd, SIGNAL (clicked (QMouseEvent *)),
-                         this, SLOT (fwd_pressed ()));
-        m_playstop = new PlayerButton (dummy, ":images/playstop.png");
-        connect (m_playstop, SIGNAL (clicked (QMouseEvent *)),
-                         this, SLOT (playstop_pressed ()));
+	connect(m_currentPlaylist, SIGNAL(activated(QString)), this, SLOT(playlist_load(QString)));
+	pflay->addWidget(m_playlistLabel);
+	pflay->addWidget(m_currentPlaylist);
+	pflay->addWidget (back);
 
-        m_currentPlaylist = new QComboBox(this);
-        m_currentPlaylist->setSizeAdjustPolicy(QComboBox::AdjustToContents);
-        m_playlistLabel = new QLabel(tr("Playlist: "),this);
+	pflay->addWidget (m_playstop);
+	if (!s.value ("ui/showstop").toBool ())
+		m_playstop->hide ();
 
-        connect(m_currentPlaylist, SIGNAL(activated(QString)), this, SLOT(playlist_load(QString)));
-        pflay->addWidget(m_playlistLabel);
-        pflay->addWidget(m_currentPlaylist);
-        pflay->addWidget (back);
+	m_playbutt = new PlayerButton (dummy, ":images/play.png");
+	connect (m_playbutt, SIGNAL (clicked (QMouseEvent *)),
+	         this, SLOT (play_pressed ()));
 
-        pflay->addWidget (m_playstop);
-        if (!s.value ("ui/showstop").toBool ())
-                m_playstop->hide ();
-
-        m_playbutt = new PlayerButton (dummy, ":images/play.png");
-        connect (m_playbutt, SIGNAL (clicked (QMouseEvent *)),
-                         this, SLOT (play_pressed ()));
-
-        pflay->addWidget (m_playbutt);
-        pflay->addWidget (fwd);
+	pflay->addWidget (m_playbutt);
+	pflay->addWidget (fwd);
 
 	m_pf = new ProgressFrame (this, client);
 	pflay->addWidget (m_pf);
 
 	PlayerButton *min = new PlayerButton (dummy, ":images/minmax.png");
 	connect (min, SIGNAL (clicked (QMouseEvent *)),
-			 this, SLOT (min_pressed ()));
+	         this, SLOT (min_pressed ()));
 	pflay->addWidget (min);
 
-        layout->addLayout (pflay, 1, 0, 1, 2);
+	layout->addLayout (pflay, 1, 0, 1, 2);
 
-//	dummy = new QWidget (main_w);
-//	QHBoxLayout *hbox = new QHBoxLayout (dummy);
-//
-//	PlayerButton *plus = new PlayerButton (dummy, ":images/plus.png");
-//	connect (plus, SIGNAL (clicked (QMouseEvent *)),
-//			 this, SLOT (plus_pressed (QMouseEvent *)));
-//
-//	PlayerButton *minus = new PlayerButton (dummy, ":images/minus.png");
-//	connect (minus, SIGNAL (clicked (QMouseEvent *)),
-//			 this, SLOT (minus_pressed (QMouseEvent *)));
-//
-//
-//
-//	PlayerButton *sett = new PlayerButton (dummy, ":images/settings.png");
-//	connect (sett, SIGNAL (clicked (QMouseEvent *)),
-//			 this, SLOT (snett_pressed (QMouseEvent *)));
-//
-//	PlayerButton *info = new PlayerButton (dummy, ":images/info.png");
-//	connect (info, SIGNAL (clicked (QMouseEvent *)),
-//			 this, SLOT (info_pressed (QMouseEvent *)));
+	//	dummy = new QWidget (main_w);
+	//	QHBoxLayout *hbox = new QHBoxLayout (dummy);
+	//
+	//	PlayerButton *plus = new PlayerButton (dummy, ":images/plus.png");
+	//	connect (plus, SIGNAL (clicked (QMouseEvent *)),
+	//			 this, SLOT (plus_pressed (QMouseEvent *)));
+	//
+	//	PlayerButton *minus = new PlayerButton (dummy, ":images/minus.png");
+	//	connect (minus, SIGNAL (clicked (QMouseEvent *)),
+	//			 this, SLOT (minus_pressed (QMouseEvent *)));
+	//
+	//
+	//
+	//	PlayerButton *sett = new PlayerButton (dummy, ":images/settings.png");
+	//	connect (sett, SIGNAL (clicked (QMouseEvent *)),
+	//			 this, SLOT (snett_pressed (QMouseEvent *)));
+	//
+	//	PlayerButton *info = new PlayerButton (dummy, ":images/info.png");
+	//	connect (info, SIGNAL (clicked (QMouseEvent *)),
+	//			 this, SLOT (info_pressed (QMouseEvent *)));
 
-        //VolumeButton *volume = new VolumeButton (dummy, m_client);
+	//VolumeButton *volume = new VolumeButton (dummy, m_client);
 
-
-
-
-
-//        hbox->addStretch (1);
-//
-//        //hbox->addWidget (volume);
-//	hbox->addWidget (plus);
-//	hbox->addWidget (minus);
-//	hbox->addWidget (info);
-//	hbox->addWidget (sett);
-//
-//        layout->addWidget (dummy, 2, 0, 1, 1);
+	//        hbox->addStretch (1);
+	//
+	//        //hbox->addWidget (volume);
+	//	hbox->addWidget (plus);
+	//	hbox->addWidget (minus);
+	//	hbox->addWidget (info);
+	//	hbox->addWidget (sett);
+	//
+	//        layout->addWidget (dummy, 2, 0, 1, 1);
 
 
 
-        layout->setRowStretch (0,1);
-        layout->setRowStretch (1, 0);
-        
-        //layout->setColumnStretch (0, 1);
-        //layout->setColumnStretch (2, 1);
-        //layout->setColumnStretch (0, 0);
-        layout->setMargin (5);
-
+	layout->setRowStretch (0,1);
+	layout->setRowStretch (1, 0);
+	
+	//layout->setColumnStretch (0, 1);
+	//layout->setColumnStretch (2, 1);
+	//layout->setColumnStretch (0, 0);
+	layout->setMargin (5);
+	
 	m_status = Xmms::Playback::STOPPED;
-
+	
 	m_current_id = 0;
 	connect (client, SIGNAL (gotConnection (XClient *)),
-			 this, SLOT (got_connection (XClient *)));
+	         this, SLOT (got_connection (XClient *)));
 
 	resize (s.value ("player/windowsize", QSize (550, 350)).toSize());
 	if (s.contains ("player/position"))
 		move (s.value ("player/position").toPoint ());
-        m_sm = ShortcutManager::instance ();
+	m_sm = ShortcutManager::instance ();
 
 	connect (m_client->settings (), SIGNAL (settingsChanged ()),
-			 this, SLOT (changed_settings ()));
+	         this, SLOT (changed_settings ()));
 
 	// System Tray setup
 	if (QSystemTrayIcon::isSystemTrayAvailable ()) {
@@ -244,13 +240,13 @@ PlayerWidget::PlayerWidget (QWidget *parent, XClient *client) : QMainWindow (par
 	m_sm->connect (this, "globalshortcuts/back", "Ctrl+Shift+X", SLOT (back_pressed ()), true);
 	m_sm->connect (this, "globalshortcuts/stop", "Ctrl+Shift+B", SLOT (playstop_pressed ()), true);
 	m_sm->connect (this, "globalshortcuts/show_hide", "Ctrl+Shift+M", SLOT (toggle_hide ()), true);
-        m_sm->connect (this, "globalshortcuts/jump_begin", "Ctrl+Shift+-", SLOT (jump_begin ()), true);
-        m_sm->connect (this, "globalshortcuts/jump_end", "Ctrl+Shift++", SLOT (jump_end ()), true);
+	m_sm->connect (this, "globalshortcuts/jump_begin", "Ctrl+Shift+-", SLOT (jump_back_ten ()), true);
+	m_sm->connect (this, "globalshortcuts/jump_end", "Ctrl+Shift++", SLOT (jump_forward_ten ()), true);
 
 	/* Process the plugins ... */
 	process_dialog_plugin ();
 
-	#ifdef Q_WS_MAC
+#ifdef Q_WS_MAC
 	m_infomenu.setTitle(tr("Info"));
 	// m_playlistmenu.setTitle(tr("Playlist"));
 	m_settingsmenu.setTitle(tr("Extras"));
@@ -258,37 +254,39 @@ PlayerWidget::PlayerWidget (QWidget *parent, XClient *client) : QMainWindow (par
 	macMenuBar.addMenu(&m_infomenu);
 	// macMenuBar.addMenu(&m_playlistmenu);
 	macMenuBar.addMenu(&m_settingsmenu);
-        #endif
+#endif
 
-        m_infomenu.setTitle(tr("Tools"));
-        QMainWindow::menuBar()->addMenu(&(this->m_infomenu));
+	m_infomenu.setTitle(tr("Tools"));
+	QMainWindow::menuBar()->addMenu(&(this->m_infomenu));
 
-        m_settingsmenu.setTitle(tr("Settings"));
-        QMainWindow::menuBar()->addMenu(&(this->m_settingsmenu));
+	m_settingsmenu.setTitle(tr("Settings"));
+	QMainWindow::menuBar()->addMenu(&(this->m_settingsmenu));
 
-        connect(client->cache(), SIGNAL(entryChanged(uint32_t)), this, SLOT(update_album_art(uint32_t)));
+	connect(client->cache(), SIGNAL(entryChanged(uint32_t)), this, SLOT(update_album_art(uint32_t)));
 
-        fprintf(stderr, "hi, at the end of constructor\n");
-    }
-
-void PlayerWidget::update_album_art(uint32_t id) {
-    if (this->m_current_id == id) {
-        QPixmap p = m_client->cache()->get_pixmap(id);
-        m_albumArt->setPixmap(p);
-    }
+	fprintf(stderr, "hi, at the end of constructor\n");
 }
 
-bool PlayerWidget::populate_playlists(const Xmms::List<std::string> &playlists) {
-    QStringList items;
-    std::string str;
-    this->m_currentPlaylist->clear();
-    foreach(str, playlists) {
-        if (str[0] != '_' && str[0] != ' ') {
-            this->m_currentPlaylist->addItem(QString::fromStdString(str));
-        }
-    }
+void PlayerWidget::update_album_art(uint32_t id) 
+{
+	if (this->m_current_id == id) {
+		QPixmap p = m_client->cache()->get_pixmap(id);
+		m_albumArt->setPixmap(p);
+	}
+}
 
-    return true;
+bool PlayerWidget::populate_playlists(const Xmms::List<std::string> &playlists) 
+{
+	QStringList items;
+	std::string str;
+	this->m_currentPlaylist->clear();
+	foreach(str, playlists) {
+		if (str[0] != '_' && str[0] != ' ') {
+			this->m_currentPlaylist->addItem(QString::fromStdString(str));
+		}
+	}
+	m_client->playlist ()->currentActive() (Xmms::bind (&PlayerWidget::handle_playlist_name, this));
+	return true;
 }
 
 void
@@ -423,12 +421,12 @@ PlayerWidget::check_hide ()
 	}
 }
 
-void PlayerWidget::jump_begin() {
+void PlayerWidget::jump_back_ten() {
     m_client->playlist()->setNextRel(-10) ();
     m_client->playback()->tickle() ();
 }
 
-void PlayerWidget::jump_end() {
+void PlayerWidget::jump_forward_ten() {
 //    m_client->playlist()->setNext(m_playlist->rowCount()-1) ();
     m_client->playlist()->setNextRel(10);
     m_client->playback()->tickle() ();
@@ -590,27 +588,33 @@ PlayerWidget::remove_all ()
 void
 PlayerWidget::got_connection (XClient *client)
 {
-    m_client = client;
+	m_client = client;
 
-    client->playback ()->getStatus () (Xmms::bind (&PlayerWidget::handle_status, this));
-    client->playback ()->broadcastStatus () (Xmms::bind (&PlayerWidget::handle_status, this));
-    client->playlist()->list() (Xmms::bind (&PlayerWidget::populate_playlists, this));
-    client->playlist()->broadcastLoaded() (Xmms::bind(&PlayerWidget::handle_playlist_load, this ));
-    client->setDisconnectCallback (boost::bind (&PlayerWidget::handle_disconnect, this));
-    client->playlist()->broadcastLoaded() (Xmms::bind(&PlayerWidget::handle_playlist_name, this ));
-    client->playlist()->currentActive() (Xmms::bind (&PlayerWidget::handle_playlist_name, this));
-
-    //m_client->playback ()->broadcastCurrentID () (Xmms::bind (&PlayerWidget::update_album_art, this));
-    //m_client->playback ()->currentID () (Xmms::bind (&PlayerWidget::update_album_art, this));
+	client->playback ()->getStatus () (Xmms::bind (&PlayerWidget::handle_status, this));
+	client->playback ()->broadcastStatus () (Xmms::bind (&PlayerWidget::handle_status, this));
+	client->playlist ()->list() (Xmms::bind (&PlayerWidget::populate_playlists, this));
+	client->playlist ()->broadcastLoaded() (Xmms::bind (&PlayerWidget::handle_playlist_load, this ));
+	client->setDisconnectCallback (boost::bind (&PlayerWidget::handle_disconnect, this));
+	client->playlist ()->broadcastLoaded() (Xmms::bind (&PlayerWidget::handle_playlist_name, this ));
+	client->playlist ()->currentActive() (Xmms::bind (&PlayerWidget::handle_playlist_name, this));
+	client->collection()->broadcastCollectionChanged() (Xmms::bind (&PlayerWidget::on_collection_changed, this));
+	//m_client->playback ()->broadcastCurrentID () (Xmms::bind (&PlayerWidget::update_album_art, this));
+	//m_client->playback ()->currentID () (Xmms::bind (&PlayerWidget::update_album_art, this));
 
 
 }
 
-bool PlayerWidget::handle_playlist_name(std::string name) {
-    this->m_currentPlaylist->setCurrentIndex(m_currentPlaylist->findText(QString::fromStdString(name)));
+bool PlayerWidget::on_collection_changed(Xmms::Dict &d) 
+{
 
-    //  setText(tr("Current Playlist: '%1'").arg(QString::fromStdString(name)));
-    return true;
+	m_client->playlist()->list() (Xmms::bind (&PlayerWidget::populate_playlists, this));
+	return true;
+}
+
+bool PlayerWidget::handle_playlist_name(std::string name) {
+	this->m_currentPlaylist->setCurrentIndex(m_currentPlaylist->findText(QString::fromStdString(name)));
+
+	return true;
 }
 
 void
@@ -702,60 +706,61 @@ void PlayerWidget::playlist_delete() {
 }
 
 bool PlayerWidget::handle_playlist_delete(const Xmms::List<std::string> &playlists) {
-    QStringList items;
-    std::string str;
-    foreach(str, playlists) {
-        if (str[0] != '_' && str[0] != ' ') {
-            items.append(QString::fromStdString(str));
-        }
-    }
+	QStringList items;
+	std::string str;
+	foreach(str, playlists) {
+		if (str[0] != '_' && str[0] != ' ') {
+			items.append(QString::fromStdString(str));
+		}
+	}
+	
+	bool ok;
+	QString item = QInputDialog::getItem(this, tr("Delete Playlist"),
+	                                     tr("Playlist:"), items, 0, false, &ok);
 
-    bool ok;
-    QString item = QInputDialog::getItem(this, tr("Delete Playlist"),
-                                         tr("Playlist:"), items, 0, false, &ok);
+	if (ok) {
+		this->m_client->playlist()->remove(item.toStdString());
+	}
 
-    if (ok) {
-        this->m_client->playlist()->remove(item.toStdString());
-    }
+	m_client->playlist()->list() (Xmms::bind (&PlayerWidget::populate_playlists, this));
 
-    m_client->playlist()->list() (Xmms::bind (&PlayerWidget::populate_playlists, this));
-
-    return true;
+	return true;
 }
 
 bool PlayerWidget::handle_playlist_load(std::string name) {
-    this->m_currentPlaylist->setCurrentIndex(m_currentPlaylist->findText(QString::fromStdString(name)));
-    //this->m_currentPlaylist->setText(tr("Current Playlist: '%1'").arg(QString::fromStdString(name)));
-    return true;
+	this->m_currentPlaylist->setCurrentIndex(m_currentPlaylist->findText(QString::fromStdString(name)));
+	//this->m_currentPlaylist->setText(tr("Current Playlist: '%1'").arg(QString::fromStdString(name)));
+	return true;
 }
 
 void PlayerWidget::playlist_load() {
 
-    m_client->playlist()->list() (Xmms::bind (&PlayerWidget::handle_playlists, this));
+    m_client->playlist()->list() (Xmms::bind (&PlayerWidget::playlist_load_dialog, this));
 }
 
 void PlayerWidget::playlist_load(QString name) {
     m_client->playlist()->load(name.toAscii().data());
 }
 
-bool PlayerWidget::handle_playlists(const Xmms::List<std::string> &playlists) {
-    QStringList items;
-    std::string str;
-    foreach(str, playlists) {
-        if (str[0] != '_' && str[0] != ' ') {
-            items.append(QString::fromStdString(str));
-        }
-    }
-
-    bool ok;
-    QString item = QInputDialog::getItem(this, tr("Load Playlist"),
-                                         tr("Playlist:"), items, 0, false, &ok);
-
-    if (ok) {
-        this->m_client->playlist()->load(item.toStdString());
-    }
-
-    return true;
-
+bool PlayerWidget::playlist_load_dialog(const Xmms::List<std::string> &playlists) 
+{
+	QStringList items;
+	std::string str;
+	foreach(str, playlists) {
+		if (str[0] != '_' && str[0] != ' ') {
+			items.append(QString::fromStdString(str));
+		}
+	}
+	
+	bool ok;
+	QString item = QInputDialog::getItem(this, tr("Load Playlist"),
+	                                     tr("Playlist:"), items, 0, false, &ok);
+	
+	if (ok) {
+		this->m_client->playlist()->load(item.toStdString());
+	}
+	
+	return true;
+	
 }
 

@@ -67,16 +67,16 @@ class PlayerWidget : public QMainWindow
 		void snett_pressed (QMouseEvent *);
 		void add_local_file ();
 		void add_local_dir ();
-                void jump_begin ();
-                void jump_end ();
+		void jump_back_ten ();
+		void jump_forward_ten ();
 		void jump_pos ();
 		void check_hide ();
 		void toggle_hide ();
-                void playlist_create ();
-                void playlist_load ();
-                void playlist_load(QString name);
-                void playlist_delete();
-
+		void playlist_create ();
+		void playlist_load ();
+		void playlist_load(QString name);
+		void playlist_delete();
+		
 	private slots:
 		void plus_pressed (QMouseEvent *);
 		void info_pressed (QMouseEvent *);
@@ -85,7 +85,7 @@ class PlayerWidget : public QMainWindow
 		void add_remote_file ();
 		void add_url ();
 		void min_pressed ();
-                void update_album_art(uint32_t);
+		void update_album_art(uint32_t);
 		void remove_selected ();
 		void remove_all ();
 
@@ -111,23 +111,23 @@ class PlayerWidget : public QMainWindow
 
 		ShortcutManager *m_sm;
 
-                QLabel *m_albumArt;
+		QLabel *m_albumArt;
 
-                QMenu *m_fileMenu;
-                QMenu *m_playlistMenu;
-                //    QLabel *m_currentPlaylist;
+		QMenu *m_fileMenu;
+		QMenu *m_playlistMenu;
+		//    QLabel *m_currentPlaylist;
 
-                QLabel *m_playlistLabel;
-                QComboBox *m_currentPlaylist;
+		QLabel *m_playlistLabel;
+		QComboBox *m_currentPlaylist;
 		bool handle_status (const Xmms::Playback::Status &);
 		void handle_disconnect ();
 		void process_dialog_plugin ();
-                bool handle_playlists(const Xmms::List<std::string> &playlists);
-                bool populate_playlists(const Xmms::List<std::string> &playlists);
-                bool handle_playlist_load(const std::string name);
-                bool handle_playlist_name(const std::string name);
-                bool handle_playlist_delete(const Xmms::List<std::string> &playlists);
-
+		bool playlist_load_dialog(const Xmms::List<std::string> &playlists);
+		bool populate_playlists(const Xmms::List<std::string> &playlists);
+		bool handle_playlist_load(const std::string name);
+		bool handle_playlist_name(const std::string name);
+		bool handle_playlist_delete(const Xmms::List<std::string> &playlists);
+		bool on_collection_changed(Xmms::Dict &d );
 		uint32_t m_current_id;
 
 
