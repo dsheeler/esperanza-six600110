@@ -597,16 +597,22 @@ PlayerWidget::got_connection (XClient *client)
 	client->setDisconnectCallback (boost::bind (&PlayerWidget::handle_disconnect, this));
 	client->playlist ()->broadcastLoaded() (Xmms::bind (&PlayerWidget::handle_playlist_name, this ));
 	client->playlist ()->currentActive() (Xmms::bind (&PlayerWidget::handle_playlist_name, this));
-	client->collection()->broadcastCollectionChanged() (Xmms::bind (&PlayerWidget::on_collection_changed, this));
-	//m_client->playback ()->broadcastCurrentID () (Xmms::bind (&PlayerWidget::update_album_art, this));
-	//m_client->playback ()->currentID () (Xmms::bind (&PlayerWidget::update_album_art, this));
+	client->collection ()->broadcastCollectionChanged() (Xmms::bind (&PlayerWidget::on_collection_changed, this));
+	client->playback ()->currentID () (Xmms::bind (&PlayerWidget::on_current_id, this));
+	client->playback ()->broadcastCurrentID () (Xmms::bind (&PlayerWidget::on_current_id, this));
 
 
 }
 
+bool PlayerWidget::on_current_id(uint32_t id)
+{
+	this->m_current_id = id;
+	update_album_art (id);
+	return true;
+}
+
 bool PlayerWidget::on_collection_changed(Xmms::Dict &d) 
 {
-
 	m_client->playlist()->list() (Xmms::bind (&PlayerWidget::populate_playlists, this));
 	return true;
 }

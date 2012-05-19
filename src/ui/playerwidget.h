@@ -128,6 +128,8 @@ class PlayerWidget : public QMainWindow
 		bool handle_playlist_name(const std::string name);
 		bool handle_playlist_delete(const Xmms::List<std::string> &playlists);
 		bool on_collection_changed(Xmms::Dict &d );
+		bool on_current_id(uint32_t id);
+		
 		uint32_t m_current_id;
 
 
