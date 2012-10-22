@@ -36,30 +36,30 @@ PlaylistView::PlaylistView (QWidget *parent, XClient *client) : QTreeView (paren
 	setItemsExpandable (false);
 	setRootIsDecorated (false);
 	setTabKeyNavigation (false);
-        setTextElideMode (Qt::ElideRight);
-        setSortingEnabled(true);
+	setTextElideMode (Qt::ElideRight);
+	setSortingEnabled(true);
 	setVerticalScrollBarPolicy (Qt::ScrollBarAlwaysOn);
-        //setUniformRowHeights(true);
+	//setUniformRowHeights(true);
 
 	setDragEnabled (true);
 	setAcceptDrops (true);
 	setDropIndicatorShown (true);
-        //	setDragDropMode (QAbstractItemView::DragDrop);
+	//	setDragDropMode (QAbstractItemView::DragDrop);
 
-        setSelectionMode (QAbstractItemView::ExtendedSelection);
-        setSelectionBehavior (QAbstractItemView::SelectRows);
+	setSelectionMode (QAbstractItemView::ExtendedSelection);
+	setSelectionBehavior (QAbstractItemView::SelectRows);
 
 	connect (client, SIGNAL(gotConnection (XClient *)),
 			 this, SLOT (got_connection (XClient *))); 
 
-        setIconSize (QSize (500, 500));
+	setIconSize (QSize (500, 500));
 
-        //QHeaderView *head = header ();
-        //connect (head, SIGNAL (sectionResized (int, int, int)), this, SLOT (head_size (int, int, int)));
-        //connect (head, SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(sortByColumn(int, Qt::SortOrder)));
+	//QHeaderView *head = header ();
+	//connect (head, SIGNAL (sectionResized (int, int, int)), this, SLOT (head_size (int, int, int)));
+	//connect (head, SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(sortByColumn(int, Qt::SortOrder)));
 
 
-    }
+}
 
 //void PlaylistView::sortByColumn(int column, Qt::SortOrder order) {
 //    std::list< std::string > properties;
@@ -96,27 +96,27 @@ PlaylistView::setModel (QAbstractItemModel *model)
 	connect (m_model, SIGNAL (entryMoved (const QModelIndex &, const QModelIndex &)),
 			 this, SLOT (moved (const QModelIndex &, const QModelIndex &)));
 
-        m_selections = new QItemSelectionModel (m_model);
+	m_selections = new QItemSelectionModel (m_model);
 	setSelectionModel (m_selections);
 
 	QHeaderView *head = header ();
 	QSettings s;
-        head->setResizeMode( QHeaderView::ResizeToContents);
-        //head->resizeSections(QHeaderView::ResizeToContents);
-        //head->setDefaultSectionSize(500);
-        //head->resizeSection (0, s.value ("playlist/section0", 180).toInt ());
+	head->setResizeMode( QHeaderView::ResizeToContents);
+	//head->resizeSections(QHeaderView::ResizeToContents);
+	//head->setDefaultSectionSize(500);
+	//head->resizeSection (0, s.value ("playlist/section0", 180).toInt ());
 
-        //resizeColumnsToContents();
-    }
+	//resizeColumnsToContents();
+}
 
 int PlaylistView::rowCount() {
-    return m_model->rowCount(QModelIndex());
+	return m_model->rowCount(QModelIndex());
 }
 
 void
 PlaylistView::rows_inserted ()
 {
-//    QHeaderView *head = header ();
+	//    QHeaderView *head = header ();
 //    head->resizeSections(QHeaderView::ResizeToContents);
 //	QModelIndex idx = m_model->index (0, 0);
 //	if (!idx.isValid ())
@@ -128,7 +128,7 @@ PlaylistView::rows_inserted ()
 //	if (!m_model->cached_size (idx.column ()).isValid () && idx.internalId () == -1) {
 //		m_model->set_cached_size (idx.column (), sizeHintForIndex (idx));
 //	}
-        //resizeColumnsToContents();
+	//resizeColumnsToContents();
 }
 
 void

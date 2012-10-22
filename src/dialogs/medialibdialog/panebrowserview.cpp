@@ -30,22 +30,22 @@ PaneBrowserView::PaneBrowserView (QWidget *parent, XClient *client, const QStrin
 	setTabKeyNavigation (false);
 	setTextElideMode (Qt::ElideNone);
 	
-    m_view = view;
-    m_client = client;
+	m_view = view;
+	m_client = client;
 
 	setVerticalScrollBarPolicy (Qt::ScrollBarAlwaysOn);
 	
-    m_model = new CollectionInfoModel (this, client, true);
-    m_model->set_collection (Xmms::Coll::Universe (), QStringList (view), QStringList (view), QStringList (view));
-    setModel (m_model);
-    
-    m_selection = new QItemSelectionModel (m_model);
-    setSelectionModel (m_selection);
-    
-    m_parentcoll = &m_univ;
-        
-    connect (this, SIGNAL (clicked (const QModelIndex &)), this, SLOT (item_clicked (const QModelIndex &)));
-    connect (this, SIGNAL (doubleClicked (const QModelIndex &)), this, SLOT (item_dbclicked (const QModelIndex &)));
+	m_model = new CollectionInfoModel (this, client, true);
+	m_model->set_collection (Xmms::Coll::Universe (), QStringList (view), QStringList (view), QStringList (view));
+	setModel (m_model);
+	
+	m_selection = new QItemSelectionModel (m_model);
+	setSelectionModel (m_selection);
+	
+	m_parentcoll = &m_univ;
+	
+	connect (this, SIGNAL (clicked (const QModelIndex &)), this, SLOT (item_clicked (const QModelIndex &)));
+	connect (this, SIGNAL (doubleClicked (const QModelIndex &)), this, SLOT (item_dbclicked (const QModelIndex &)));
 }
 
 void

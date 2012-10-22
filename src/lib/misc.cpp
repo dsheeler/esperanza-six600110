@@ -31,14 +31,13 @@ bool connectXmms2(XClient *client, QWidget *parent)
 	bool b;
 
 browser:
-	if (!getenv ("XMMS_PATH")) {
+	if (s.value ("serverdialog/show").toBool ()) {
 		ServerDialog sd (parent);
 		if (!s.value ("serverdialog/show").toBool ()) {
 			path = sd.get_default ();
 		} else {
 			path = sd.get_path ();
 		}
-
 	} else {
 		path = getenv ("XMMS_PATH");
 	}

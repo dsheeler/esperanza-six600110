@@ -91,7 +91,7 @@ CollectionModel::id_list_get (Xmms::List<int> const &list)
 	if (i == 0) {
 		// FIXME: This should not happen, but it does
 		qDebug() << "FIXME: "<< __FILE__ << " line: " << __LINE__;
-		return true;
+		//return true;
 	}
 
 	beginInsertRows (QModelIndex (), 0, i);

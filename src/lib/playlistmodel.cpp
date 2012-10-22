@@ -35,90 +35,90 @@
 
 PlaylistModel::PlaylistModel (QObject *parent, XClient *client, const QString &name) : QAbstractItemModel (parent), m_current_pos (0)
 {
-//	m_columns.append ("#");
+	//	m_columns.append ("#");
 	m_columns.append ("Artist");
-        m_columns.append("Album");
+	m_columns.append("Album");
 	m_columns.append ("Title");
-        m_columns.append ("TrackNr");
-        m_columns.append ("Timesplayed");
+	m_columns.append ("TrackNr");
+	m_columns.append ("Timesplayed");
 
-//	m_colfallback.append ("");
+	//	m_colfallback.append ("");
 	m_colfallback.append ("");
-        m_colfallback.append ("");
-        m_colfallback.append ("");
-        m_colfallback.append ("");
+	m_colfallback.append ("");
+	m_colfallback.append ("");
+	m_colfallback.append ("");
 	m_colfallback.append ("url");
 
-        m_cached_size.append (QSize ());
 	m_cached_size.append (QSize ());
 	m_cached_size.append (QSize ());
 	m_cached_size.append (QSize ());
-        m_cached_size.append (QSize ());
+	m_cached_size.append (QSize ());
+	m_cached_size.append (QSize ());
 
 	connect (client, SIGNAL(gotConnection (XClient *)), this, SLOT (got_connection (XClient *))); 
 	connect (client->cache (), SIGNAL(entryChanged (uint32_t)), this, SLOT (entry_changed (uint32_t)));
 	
 	m_isactive = (name == QLatin1String ("_active"));
 	
-        m_name = name;
-        m_client = NULL;
+	m_name = name;
+	m_client = NULL;
 
-    if (client->isConnected ()) {
-        got_connection (client);
-    }
+	if (client->isConnected ()) {
+		got_connection (client);
+	}
 }
 
 void PlaylistModel::sort(int column, Qt::SortOrder order) {
 
-    if (m_client && m_client->isConnected()) {
-        std::list< std::string > properties;
-        std::string prop, playlistName;
-        QString qprop;
+	if (m_client && m_client->isConnected()) {
+		std::list< std::string > properties;
+		std::string prop, playlistName;
+		QString qprop;
 
-        qprop = m_columns.at(column).toLower();
-        if (qprop == "artist") {
-            properties.push_back("album");
-            properties.push_back("partofset");
-            properties.push_back("tracknr");
-            properties.push_back("timesplayed");
-        } else if (qprop == "album") {
-            properties.push_back("partofset");
-            properties.push_back("tracknr");
-            properties.push_back("artist");
-            properties.push_back("timesplayed");
-        } else if (qprop == "timesplayed") {
-            properties.push_back("album");
-            properties.push_back("partofset");
-            properties.push_back("tracknr");
-            properties.push_back("artist");
+		qprop = m_columns.at(column).toLower();
+		if (qprop == "artist") {
+			properties.push_back("album");
+			properties.push_back("partofset");
+			properties.push_back("tracknr");
+			properties.push_back("timesplayed");
+		} else if (qprop == "album") {
+			properties.push_back("partofset");
+			properties.push_back("tracknr");
+			properties.push_back("artist");
+			properties.push_back("timesplayed");
+		} else if (qprop == "timesplayed") {
+			properties.push_back("album");
+			properties.push_back("partofset");
+			properties.push_back("tracknr");
+			properties.push_back("artist");
 
-        }
-        prop.assign(XClient::qToStd( qprop ));
-        playlistName.assign(m_client->playlist()->DEFAULT_PLAYLIST);
-        properties.push_front(prop);
+		}
+		prop.assign(XClient::qToStd( qprop ));
+		playlistName.assign(m_client->playlist()->DEFAULT_PLAYLIST);
+		properties.push_front(prop);
 
-        if (order == Qt::DescendingOrder) {
-            (*properties.begin()).insert(0,1,'-');
-        }
+		if (order == Qt::DescendingOrder) {
+			(*properties.begin()).insert(0,1,'-');
+		}
 
-        try {
-            m_client->playlist()->sort(properties);
-        } catch (std::exception e) {
-            QMessageBox::information(0, tr("Uh Oh"), tr("Exception Occured While Trying to Sort Playlist on Server"));
-        }
+		try {
+			m_client->playlist()->sort(properties);
+		} catch (std::exception e) {
+			QMessageBox::information(0, tr("Uh Oh"), tr("Exception Occured While Trying to Sort Playlist on Server"));
+		}
 
-    }
+	}
 }
 
 void
 PlaylistModel::set_playlist (const QString &name)
 {
-    if (name == QLatin1String ("_active")) {
-        m_isactive = true;
-        m_client->playlist ()->currentActive () (Xmms::bind (&PlaylistModel::handle_current_pls, this));
-    } else {
-        m_isactive = false;
-    }
+	if (name == QLatin1String ("_active")) {
+		m_isactive = true;
+		m_client->playlist ()->currentActive () (Xmms::bind (&PlaylistModel::handle_current_pls, this));
+	} else {
+		m_isactive = false;
+	}
 	m_name = name;
 	m_client->playlist ()->listEntries (XClient::qToStd (name)) (Xmms::bind (&PlaylistModel::handle_list, this));
 }
@@ -126,20 +126,20 @@ PlaylistModel::set_playlist (const QString &name)
 bool
 PlaylistModel::handle_current_pls (const std::string &name)
 {
-    if (m_name == QLatin1String ("_active")) {
-        m_name = XClient::stdToQ (name);
-    }
-    
-    return true;
+	if (m_name == QLatin1String ("_active")) {
+		m_name = XClient::stdToQ (name);
+	}
+	
+	return true;
 }
 
 void
 PlaylistModel::got_connection (XClient *client)
 {
-    if (m_isactive) {
-        client->playlist ()->currentActive () (Xmms::bind (&PlaylistModel::handle_current_pls, this));
-    }
-    
+	if (m_isactive) {
+		client->playlist ()->currentActive () (Xmms::bind (&PlaylistModel::handle_current_pls, this));
+	}
+	
 	client->playlist ()->listEntries (XClient::qToStd (m_name)) (Xmms::bind (&PlaylistModel::handle_list, this));
 	client->playlist ()->currentPos () (Xmms::bind (&PlaylistModel::handle_update_pos, this));
 
@@ -157,7 +157,7 @@ PlaylistModel::handle_pls_loaded (const std::string &name)
 	if (m_isactive) {
 		m_client->playlist ()->listEntries (name)
 									   (Xmms::bind (&PlaylistModel::handle_list, this));
-        m_name = XClient::stdToQ (name);
+		m_name = XClient::stdToQ (name);
 	}
 
 	return true;
@@ -214,7 +214,7 @@ PlaylistModel::handle_change (const Xmms::Dict &chg)
 	if (chg.contains ("name")) {
 		s = XClient::stdToQ (chg.get<std::string> ("name"));
 	}
-    
+	
 	if (s != m_name) {
 		return true;
 	}
@@ -222,47 +222,47 @@ PlaylistModel::handle_change (const Xmms::Dict &chg)
 	QModelIndex idx = QModelIndex ();
 
 	switch (change) {
-		case XMMS_PLAYLIST_CHANGED_ADD:
-			beginInsertRows (idx, pos, pos);
-			m_plist.append (id);
-			endInsertRows ();
-                        emit this->entryAdded();
-			break;
-		case XMMS_PLAYLIST_CHANGED_INSERT:
-			beginInsertRows (idx, pos, pos);
-			m_plist.insert (pos, id);
-			endInsertRows ();
-                        emit this->entryAdded();
-			break;
-		case XMMS_PLAYLIST_CHANGED_MOVE:
-			npos = chg.get<int32_t> ("newposition");
+	case XMMS_PLAYLIST_CHANGED_ADD:
+		beginInsertRows (idx, pos, pos);
+		m_plist.append (id);
+		endInsertRows ();
+		emit this->entryAdded();
+		break;
+	case XMMS_PLAYLIST_CHANGED_INSERT:
+		beginInsertRows (idx, pos, pos);
+		m_plist.insert (pos, id);
+		endInsertRows ();
+		emit this->entryAdded();
+		break;
+	case XMMS_PLAYLIST_CHANGED_MOVE:
+		npos = chg.get<int32_t> ("newposition");
+		
+		beginRemoveRows (idx, pos, pos);
+		m_plist.removeAt (pos);
+		endRemoveRows ();
 
-			beginRemoveRows (idx, pos, pos);
-			m_plist.removeAt (pos);
-			endRemoveRows ();
+		beginInsertRows (idx, npos, npos);
+		m_plist.insert (npos, id);
+		endInsertRows ();
 
-			beginInsertRows (idx, npos, npos);
-			m_plist.insert (npos, id);
-			endInsertRows ();
+		if (pos < npos && pos)
+			pos --;
 
-			if (pos < npos && pos)
-				pos --;
+		emit entryMoved (index (pos, 0), index (npos, 0));
 
-			emit entryMoved (index (pos, 0), index (npos, 0));
-
-			break;
-		case XMMS_PLAYLIST_CHANGED_REMOVE:
-            m_client->cache ()->invalidate (m_plist[pos]);
-			beginRemoveRows (idx, pos, pos);
-			m_plist.removeAt (pos);
-			endRemoveRows ();			
-			break;
+		break;
+	case XMMS_PLAYLIST_CHANGED_REMOVE:
+		m_client->cache ()->invalidate (m_plist[pos]);
+		beginRemoveRows (idx, pos, pos);
+		m_plist.removeAt (pos);
+		endRemoveRows ();			
+		break;
 		case XMMS_PLAYLIST_CHANGED_SHUFFLE:
 		case XMMS_PLAYLIST_CHANGED_SORT:
 		case XMMS_PLAYLIST_CHANGED_CLEAR:
-            m_client->cache ()->invalidate_all ();
-			m_client->playlist ()->listEntries () (Xmms::bind (&PlaylistModel::handle_list, this));
-			break;
+		m_client->cache ()->invalidate_all ();
+		m_client->playlist ()->listEntries () (Xmms::bind (&PlaylistModel::handle_list, this));
+		break;
 	}
 
 	return true;

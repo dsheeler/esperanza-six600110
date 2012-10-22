@@ -131,6 +131,8 @@ VolumeButton::handle_volume (const Xmms::Dict &d)
 void
 VolumeButton::set_volume (int vol)
 {
+	setToolTip(tr("Volume: %1%").arg(vol));
+	
 	m_client->playback ()->volumeGet () (Xmms::bind (&VolumeButton::get_channel_names, this));
 	foreach (QString chanName, *m_channel_names) {
 		m_client->playback ()->volumeSet(chanName.toStdString (), vol);

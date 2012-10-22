@@ -1,30 +1,27 @@
-<!DOCTYPE RCC><RCC version="1.0">
-	<qresource>
-		<file>images/play.png</file>
-		<file>images/forward.png</file>
-		<file>images/back.png</file>
-		<file>images/plus.png</file>
-		<file>images/minus.png</file>
-		<file>images/settings.png</file>
-		<file>images/pause.png</file>
-		<file>images/volume.png</file>
-		<file>images/stop.png</file>
-		<file>images/playstop.png</file>
-		<file>images/progress.mng</file>
-		<file>images/systray.png</file>
-		<file>images/esperanza.png</file>
-		<file>images/info.png</file>
-		<file>images/minmax.png</file>
-		<file>images/lastfm.png</file>
-
-		<file>text/about.html</file>
-		<file>text/shortcuts.html</file>
-		<file>text/infobrowser.html</file>
-
-		<file>translations/esperanza_fr.qm</file>
-		<file>translations/esperanza_nl.qm</file>
-		<file>translations/esperanza_sv.qm</file>
-		<file>translations/esperanza_de.qm</file>
-		<file>translations/esperanza_ru.qm</file>
-	</qresource>
+<RCC>
+    <qresource prefix="/">
+        <file>images/play.png</file>
+        <file>images/forward.png</file>
+        <file>images/back.png</file>
+        <file>images/plus.png</file>
+        <file>images/minus.png</file>
+        <file>images/settings.png</file>
+        <file>images/volume.png</file>
+        <file>images/stop.png</file>
+        <file>images/playstop.png</file>
+        <file>images/progress.mng</file>
+        <file>images/systray.png</file>
+        <file>images/esperanza.png</file>
+        <file>images/info.png</file>
+        <file>images/minmax.png</file>
+        <file>images/lastfm.png</file>
+        <file>text/about.html</file>
+        <file>text/shortcuts.html</file>
+        <file>text/infobrowser.html</file>
+        <file>translations/esperanza_fr.qm</file>
+        <file>translations/esperanza_nl.qm</file>
+        <file>translations/esperanza_sv.qm</file>
+        <file>translations/esperanza_de.qm</file>
+        <file>images/pause.png</file>
+    </qresource>
 </RCC>

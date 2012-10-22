@@ -60,8 +60,7 @@ SOURCES += fancyplaylistview.cpp \
     progressindicator.cpp \
     mdns.cpp \
     playlistview.cpp \
-    serverdialog.cpp \
-    ../../mainwindow.cpp
+    serverdialog.cpp 
 HEADERS += esperanza_plugin.h \
     fancyplaylistview.h \
     filedialog.h \
@@ -75,6 +74,4 @@ HEADERS += esperanza_plugin.h \
     serverdialog.h \
     shortcutmanager.h \
     systemtray.h \
-    volumebar.h \
-    ../../mainwindow.h
-FORMS += ../../mainwindow.ui
+    volumebar.h 
