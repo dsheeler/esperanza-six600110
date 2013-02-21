@@ -25,6 +25,7 @@
 #include <QVariant>
 #include <QPixmapCache>
 #include <QSettings>
+#include <QDebug>
 
 XClientCache::XClientCache (QObject *parent, XClient *client) : QObject (parent)
 {
@@ -105,7 +106,6 @@ XClientCache::handle_bindata (const Xmms::bin &data, const QString &id)
 	}
 
 	QPixmapCache::insert (id, i);
-
 	QList<uint32_t> ids = m_icon_map[id];
 	for (int i = 0; i < ids.size (); i++) {
 		emit entryChanged (ids.at (i));
@@ -131,8 +131,9 @@ XClientCache::get_pixmap (uint32_t id)
 			            boost::bind (&XClientCache::handle_bindata, this, _1, hash));
 			m_icon_map[hash].append (id);
 	
-			return p;
-		}
+    }
+    return p;
+
 	}
 	return QPixmap ();
 }
